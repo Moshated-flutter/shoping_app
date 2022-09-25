@@ -7,20 +7,20 @@ class ProductItem extends StatelessWidget {
   final String id;
   final String title;
   final String imageUrl;
-  ProductItem(this.id, this.imageUrl, this.title);
+  ProductItem(this.id, this.title, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: GridTile(
+        // ignore: sort_child_properties_last
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) {
-                return ProductDetails(title);
-              },
-            ));
+            Navigator.of(context).pushNamed(
+              ProductDetails.routeName,
+              arguments: id,
+            );
           },
           child: Image.network(
             imageUrl,
