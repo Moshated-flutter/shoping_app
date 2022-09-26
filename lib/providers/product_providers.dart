@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoping_app/models/product.dart';
+import 'package:shoping_app/providers/product.dart';
 
 class Products_provider with ChangeNotifier {
   List<Product_models> _items = [
@@ -36,10 +36,12 @@ class Products_provider with ChangeNotifier {
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
+  var favoritesFiltter = false;
+  List<Product_models> get favItems {
+    return items.where((element) => element.isFavorite).toList();
+  }
+
   List<Product_models> get items {
     return [..._items];
-    void addproduct() {
-      notifyListeners();
-    }
   }
 }
