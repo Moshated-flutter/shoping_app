@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/cart.dart';
+import 'package:shoping_app/providers/orders_providers.dart';
 import 'package:shoping_app/widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
@@ -11,47 +12,55 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart Item'),
+        title: const Text('Cart Item'),
       ),
       body: Column(
         children: [
           Card(
-            margin: EdgeInsets.all(15),
+            margin: const EdgeInsets.all(15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(15),
                   child: Text(
                     'Total:',
                     style: TextStyle(fontSize: 15),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(
                   children: [
                     Chip(
-                      label: Text('\$ ${cart.totalSum}'),
+                      label: Text('\$ ${cart.totalSum.toStringAsFixed(2)}'),
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     cart.totalSum == 0
-                        ? SizedBox()
+                        ? const SizedBox()
                         : TextButton(
-                            onPressed: () {},
-                            child: Text('place order!'),
+                            onPressed: () {
+                              Provider.of<Orders>(context, listen: false)
+                                  .addorder(
+                                cart.items.values.toList(),
+                                cart.totalSum,
+                              );
+                              cart.clearCart();
+                            },
+                            child: const Text('place order!'),
                           )
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Expanded(
             child: ListView.builder(
               itemBuilder: (context, index) => CartWidget(
                 cart.items.values.toList()[index].id,
+                cart.items.keys.toList()[index],
                 cart.items.values.toList()[index].title,
                 cart.items.values.toList()[index].price,
                 cart.items.values.toList()[index].amount,

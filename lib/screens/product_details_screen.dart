@@ -15,7 +15,35 @@ class ProductDetails extends StatelessWidget {
       appBar: AppBar(
         title: Text(chosenProduc.title),
       ),
-      body: Container(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                chosenProduc.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Card(
+              child: Text(
+                '\$${chosenProduc.price}',
+                style: TextStyle(fontSize: 20, color: Colors.grey),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Card(
+              child: Text(chosenProduc.description),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

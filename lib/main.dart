@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
+import 'package:shoping_app/providers/orders_providers.dart';
 import 'package:shoping_app/providers/product.dart';
 import 'package:shoping_app/providers/product_providers.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
+import 'package:shoping_app/screens/ordrer_screen.dart';
 import 'package:shoping_app/screens/product_details_screen.dart';
 import 'package:shoping_app/screens/product_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +22,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => Cart(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Orders(),
         )
       ],
       child: MaterialApp(
@@ -32,10 +37,9 @@ class MyApp extends StatelessWidget {
         ),
         home: MyHomePage(),
         routes: {
-          ProductDetails.routeName: (context) {
-            return ProductDetails();
-          },
+          ProductDetails.routeName: (context) => ProductDetails(),
           CartScreen.routeName: (context) => CartScreen(),
+          OrderScreen.routename: (context) => OrderScreen(),
         },
       ),
     );

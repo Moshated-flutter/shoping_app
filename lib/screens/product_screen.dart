@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/product_providers.dart';
+import 'package:shoping_app/screens/app_drawer.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
 import 'package:shoping_app/widgets/203%20badge.dart';
 import 'package:shoping_app/widgets/product_grid.dart';
@@ -53,6 +54,7 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
         ),
       ]),
+      drawer: AppDrawer(),
       body: Column(
         children: [
           SizedBox(
