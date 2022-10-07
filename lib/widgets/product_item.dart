@@ -58,6 +58,19 @@ class ProductItem extends StatelessWidget {
                 chossenproducts.price,
                 chossenproducts.title,
               );
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('added to the cart!'),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'Undo!',
+                    onPressed: () {
+                      cart.removesingleItem(chossenproducts.id);
+                    },
+                  ),
+                ),
+              );
             },
             icon: const Icon(Icons.shopping_cart_outlined),
           ),

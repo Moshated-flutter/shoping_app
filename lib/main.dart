@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/orders_providers.dart';
-import 'package:shoping_app/providers/product.dart';
+
 import 'package:shoping_app/providers/product_providers.dart';
+import 'package:shoping_app/screens/add_product.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
 import 'package:shoping_app/screens/ordrer_screen.dart';
 import 'package:shoping_app/screens/product_details_screen.dart';
 import 'package:shoping_app/screens/product_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shoping_app/screens/user_product.dart';
 
 void main() => runApp(MyApp());
 
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
           ProductDetails.routeName: (context) => ProductDetails(),
           CartScreen.routeName: (context) => CartScreen(),
           OrderScreen.routename: (context) => OrderScreen(),
+          UserProductScreen.routename: (context) => UserProductScreen(),
+          AddProduct.routename: (context) => AddProduct(),
         },
       ),
     );

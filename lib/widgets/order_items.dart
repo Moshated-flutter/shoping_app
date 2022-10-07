@@ -57,7 +57,9 @@ class _OrderwidgetState extends State<Orderwidget> {
                                     Text(
                                       '${e.amount}x \$${e.price}',
                                       style: const TextStyle(
-                                          fontSize: 18, color: Colors.black),
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                      ),
                                     )
                                   ],
                                 ),

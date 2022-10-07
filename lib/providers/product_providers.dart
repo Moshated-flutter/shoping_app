@@ -44,4 +44,16 @@ class Products_provider with ChangeNotifier {
   List<Product_models> get items {
     return [..._items];
   }
+
+  void addproduct(Product_models product) {
+    final newproduct = Product_models(
+      id: DateTime.now().toString(),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+    _items.add(newproduct);
+    notifyListeners();
+  }
 }
