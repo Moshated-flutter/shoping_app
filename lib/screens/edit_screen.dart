@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product.dart';
 import 'package:shoping_app/providers/product_providers.dart';
+import 'package:shoping_app/screens/user_product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -16,6 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+  var confirmation = false;
   var _editedProduct = Product_models(
     id: '',
     title: '',
@@ -81,20 +83,42 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _form.currentState!.save();
-    if (_editedProduct.id != null) {
-      Provider.of<Products_provider>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
-    } else {
-      Provider.of<Products_provider>(context, listen: false)
-          .addproduct(_editedProduct);
-    }
-    Navigator.of(context).pop();
+  Future _saveform(BuildContext context1) {
+    return showDialog(
+      context: context1,
+      builder: (cont) {
+        return AlertDialog(
+          title: Text('Do you want to save the changes?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                confirmation = true;
+                _form.currentState!.save();
+                if (_editedProduct.id != null) {
+                  Provider.of<Products_provider>(context, listen: false)
+                      .updateProduct(_editedProduct.id, _editedProduct);
+                } else {
+                  Provider.of<Products_provider>(context, listen: false)
+                      .addproduct(_editedProduct);
+                }
+                Navigator.of(cont).pushNamedAndRemoveUntil(
+                  UserProductScreen.routename,
+                  (route) => false,
+                );
+              },
+              child: Text('Yes'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                confirmation = false;
+                Navigator.of(cont).pop();
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -105,7 +129,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: _saveForm,
+            onPressed: () {
+              if (!_form.currentState!.validate()) {
+                return null;
+              }
+              _saveform(context);
+            },
           ),
         ],
       ),
@@ -228,7 +257,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       controller: _imageUrlController,
                       focusNode: _imageUrlFocusNode,
                       onFieldSubmitted: (_) {
-                        _saveForm();
+                        if (!_form.currentState!.validate()) {
+                          return null;
+                        }
+                        _saveform(context);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {

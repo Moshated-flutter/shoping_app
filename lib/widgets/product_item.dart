@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/cart.dart';
@@ -7,11 +5,6 @@ import 'package:shoping_app/providers/product.dart';
 import 'package:shoping_app/screens/product_details_screen.dart';
 
 class ProductItem extends StatelessWidget {
-  // final String id;
-  // final String title;
-  // final String imageUrl;
-  // ProductItem(this.id, this.title, this.imageUrl);
-
   @override
   Widget build(BuildContext context) {
     final chossenproducts = Provider.of<Product_models>(context);
