@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/cart.dart';
@@ -22,7 +24,7 @@ class ProductItem extends StatelessWidget {
           },
           child: Image.network(
             chossenproducts.imageUrl,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           ),
         ),
         footer: GridTileBar(
@@ -54,8 +56,8 @@ class ProductItem extends StatelessWidget {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('added to the cart!'),
-                  duration: Duration(seconds: 2),
+                  content: const Text('added to the cart!'),
+                  duration: const Duration(seconds: 2),
                   action: SnackBarAction(
                     label: 'Undo!',
                     onPressed: () {

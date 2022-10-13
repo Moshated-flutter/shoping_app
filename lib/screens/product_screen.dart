@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/product_providers.dart';
+
 import 'package:shoping_app/screens/app_drawer.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
 import 'package:shoping_app/widgets/203%20badge.dart';
 import 'package:shoping_app/widgets/product_grid.dart';
-import 'package:shoping_app/widgets/product_item.dart';
 import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -14,11 +14,33 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  @override
   var favoriteFillter = false;
+  var _init = true;
+  var _isloading = false;
+
+  @override
+  void didChangeDependencies() {
+    if (_init) {
+      setState(() {
+        _isloading = true;
+      });
+      Provider.of<Products_provider>(context)
+          .fetchAndSetproduct()
+          .then((value) {
+        setState(() {
+          _isloading = false;
+        });
+      });
+    }
+    _init = false;
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Shop'), actions: [
+      appBar: AppBar(title: const Text('My Shop'), actions: [
         PopupMenuButton(
           onSelected: (value) {
             setState(() {
@@ -30,7 +52,7 @@ class _ProductScreenState extends State<ProductScreen> {
               }
             });
           },
-          icon: Icon(Icons.more_vert),
+          icon: const Icon(Icons.more_vert),
           itemBuilder: (context) => [
             const PopupMenuItem(
               child: Text('show all'),
@@ -44,8 +66,9 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
         Consumer<Cart>(
           builder: (context, cartData, child) => Badge(
+            // ignore: sort_child_properties_last
             child: IconButton(
-              icon: Icon(Icons.shopping_basket),
+              icon: const Icon(Icons.shopping_basket),
               onPressed: () {
                 Navigator.of(context).pushNamed(CartScreen.routeName);
               },
@@ -54,15 +77,19 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
         ),
       ]),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           Container(
-            height: 500,
-            child: ProductGrid(favoriteFillter),
+            height: 700,
+            child: _isloading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ProductGrid(favoriteFillter),
           ),
         ],
       ),

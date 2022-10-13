@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/orders_providers.dart';

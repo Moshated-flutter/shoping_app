@@ -1,3 +1,5 @@
+// ignore_for_file: sized_box_for_whitespace, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/orders_providers.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +18,7 @@ class _OrderwidgetState extends State<Orderwidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Column(
         children: [
           ListTile(
@@ -30,13 +32,13 @@ class _OrderwidgetState extends State<Orderwidget> {
                   expanded = !expanded;
                 });
               },
-              icon: Icon(Icons.expand_more),
+              icon: const Icon(Icons.expand_more),
             ),
           ),
           if (expanded)
             Column(
               children: [
-                Divider(),
+                const Divider(),
                 Container(
                   height: min(widget.order.products.length * 30 + 10, 450),
                   child: ListView(

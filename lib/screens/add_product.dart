@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product.dart';
@@ -45,7 +47,7 @@ class _AddProductState extends State<AddProduct> {
       context: context1,
       builder: (cont) {
         return AlertDialog(
-          title: Text('Do you want to add the item ?'),
+          title: const Text('Do you want to add the item ?'),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -62,33 +64,30 @@ class _AddProductState extends State<AddProduct> {
                     context: context,
                     builder: (contextshowdialog) {
                       return AlertDialog(
-                        title: Text('An error occurred!'),
-                        content: Text('Something went wrong'),
+                        title: const Text('An error occurred!'),
+                        content: const Text('Something went wrong'),
                         actions: [
                           ElevatedButton(
                             onPressed: () =>
                                 Navigator.of(contextshowdialog).pop(),
-                            child: Text('okey!'),
+                            child: const Text('okey!'),
                           ),
                         ],
                       );
                     },
                   );
                 }).then((_) {
-                  setState(() {
-                    _isloading = false;
-                  });
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       UserProductScreen.routename, (route) => false);
                 });
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(cont).pop();
               },
-              child: Text('No'),
+              child: const Text('No'),
             ),
           ],
         );
@@ -117,13 +116,13 @@ class _AddProductState extends State<AddProduct> {
               }
               _saveform(context);
             },
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
           ),
         ],
         title: const Text('Add your produc'),
       ),
       body: _isloading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(

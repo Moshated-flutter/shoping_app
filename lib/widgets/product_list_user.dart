@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product_providers.dart';
@@ -10,26 +12,36 @@ class UserProductList extends StatelessWidget {
   var confimation = false;
   UserProductList(this.id, this.title, this.imageUrl);
 
-  Future deleteform(BuildContext context1) {
+  Future<void> deleteform(BuildContext context1) {
+    var scaffoldmess = ScaffoldMessenger.of(context1);
     return showDialog(
       context: context1,
       builder: (cont) {
         return AlertDialog(
-          title: Text('Do you want to remove the item ?'),
+          title: const Text('Do you want to remove the item ?'),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                confimation = true;
+              onPressed: () async {
                 Navigator.of(cont).pop();
+                try {
+                  await Provider.of<Products_provider>(cont, listen: false)
+                      .deleteProduct(id);
+                } catch (error) {
+                  scaffoldmess.showSnackBar(
+                    const SnackBar(
+                      content: Text('An error eccurred'),
+                    ),
+                  );
+                }
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
             ElevatedButton(
               onPressed: () {
                 confimation = false;
                 Navigator.of(cont).pop();
               },
-              child: Text('No'),
+              child: const Text('No'),
             ),
           ],
         );
@@ -59,10 +71,6 @@ class UserProductList extends StatelessWidget {
             IconButton(
               onPressed: () {
                 deleteform(context);
-                if (confimation) {
-                  Provider.of<Products_provider>(context, listen: false)
-                      .deleteProduct(id);
-                }
               },
               icon: const Icon(Icons.delete),
               color: Theme.of(context).errorColor,
