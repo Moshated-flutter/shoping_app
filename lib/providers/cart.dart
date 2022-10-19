@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shoping_app/models/exception_http.dart';
 
 class CartItem {
   final String id;
@@ -38,11 +39,11 @@ class Cart with ChangeNotifier {
 
   void addCart(String productId, double price, String title) async {
     const urlnew =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/cart.json';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json';
     if (_items.containsKey(productId)) {
       var findedaddress = _items[productId]!.id;
       final urlUpdate =
-          'https://shopapp-a5aa1-default-rtdb.firebaseio.com/cart/$findedaddress.json';
+          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$findedaddress.json';
       _items.update(
         productId,
         (value) {
@@ -87,13 +88,42 @@ class Cart with ChangeNotifier {
   }
 
   void removeitem(String productid) async {
+    final url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$productid.json';
+
+    CartItem? existingcart = _items[productid];
+    _items.removeWhere((key, value) => key == productid);
+    notifyListeners();
+    final response = await http.delete(Uri.parse(url));
+    if (response.statusCode >= 400) {
+      _items.addAll({
+        productid: CartItem(
+            id: existingcart!.id,
+            title: existingcart.title,
+            amount: existingcart.amount,
+            price: existingcart.price)
+      });
+      notifyListeners();
+      throw ExceptionHttp('An error had eccurred');
+    }
+    existingcart = null;
     _items.remove(productid);
     notifyListeners();
   }
 
-  void clearCart() {
+  void clearCart() async {
+    Map<String, CartItem>? dummmyitem = _items;
+    const url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json';
     _items = {};
     notifyListeners();
+    final response = await http.delete(Uri.parse(url));
+    if (response.statusCode >= 400) {
+      _items = dummmyitem;
+      notifyListeners();
+      return;
+    }
+    dummmyitem = null;
   }
 
   void removesingleItem(String singleItemid) async {
@@ -116,10 +146,17 @@ class Cart with ChangeNotifier {
   }
 
   Future<void> fetchAndSetCart() async {
-    const url = 'https://shopapp-a5aa1-default-rtdb.firebaseio.com/cart.json';
+    const url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json';
 
     final response = await http.get(Uri.parse(url));
+    if (response == null) {
+      return;
+    }
     print(json.decode(response.body));
+    if (json.decode(response.body) == null) {
+      return;
+    }
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final Map<String, CartItem> loadedCart = {};
     extractedData.forEach((key, value) {

@@ -39,17 +39,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     cart.totalSum == 0
                         ? const SizedBox()
-                        : TextButton(
-                            onPressed: () {
-                              Provider.of<Orders>(context, listen: false)
-                                  .addorder(
-                                cart.items.values.toList(),
-                                cart.totalSum,
-                              );
-                              cart.clearCart();
-                            },
-                            child: const Text('place order!'),
-                          )
+                        : Adding_oreder_buttom(cart: cart)
                   ],
                 ),
               ],
@@ -71,5 +61,42 @@ class CartScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class Adding_oreder_buttom extends StatefulWidget {
+  const Adding_oreder_buttom({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+  @override
+  State<Adding_oreder_buttom> createState() => _Adding_oreder_buttomState();
+}
+
+class _Adding_oreder_buttomState extends State<Adding_oreder_buttom> {
+  var _isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    return _isloading
+        ? const CircularProgressIndicator()
+        : ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                _isloading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addorder(
+                widget.cart.items.values.toList(),
+                widget.cart.totalSum,
+              );
+              setState(() {
+                _isloading = false;
+              });
+
+              widget.cart.clearCart();
+            },
+            child: const Text('place order!'),
+          );
   }
 }

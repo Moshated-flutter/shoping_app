@@ -52,7 +52,7 @@ class Products_provider with ChangeNotifier {
 
   Future<void> addproduct(Product_models product) async {
     const url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product.json';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json';
     try {
       final response = await http.post(Uri.parse(url),
           body: json.encode({
@@ -81,11 +81,11 @@ class Products_provider with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/$id.json';
+          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json';
       http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
-            'price': newProduct.price,
+            'price': newProduct.price.toDouble(),
             'description': newProduct.description,
             'imageUrl': newProduct.imageUrl,
           }));
@@ -100,7 +100,7 @@ class Products_provider with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/$id.json';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json';
     var existingindex = _items.indexWhere((element) => element.id == id);
     Product_models? existingproduct = _items[existingindex];
     _items.removeAt(existingindex);
@@ -116,23 +116,24 @@ class Products_provider with ChangeNotifier {
 
   Future<void> fetchAndSetproduct() async {
     const url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product.json';
-    try {
-      final response = await http.get(Uri.parse(url));
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      final List<Product_models> loadedProduct = [];
-      extractedData.forEach((key, value) {
-        loadedProduct.add(Product_models(
-            id: key,
-            title: value['title'],
-            description: value['description'],
-            price: value['price'],
-            imageUrl: value['imageUrl']));
-      });
-      _items = loadedProduct;
-      notifyListeners();
-    } catch (error) {
-      throw error;
-    }
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json';
+
+    final response = await http.get(Uri.parse(url));
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    final List<Product_models> loadedProduct = [];
+    extractedData.forEach((key, value) {
+      loadedProduct.add(
+        Product_models(
+          id: key,
+          title: value['title'],
+          description: value['description'],
+          price: value['price'],
+          imageUrl: value['imageUrl'],
+          isFavorite: value['isfav'],
+        ),
+      );
+    });
+    _items = loadedProduct;
+    notifyListeners();
   }
 }
