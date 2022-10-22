@@ -1,11 +1,13 @@
 // ignore_for_file: use_key_in_widget_constructors, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:shoping_app/providers/auth_provider.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/orders_providers.dart';
 
 import 'package:shoping_app/providers/product_providers.dart';
 import 'package:shoping_app/screens/add_product.dart';
+import 'package:shoping_app/screens/auth_screen.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
 import 'package:shoping_app/screens/edit_screen.dart';
 import 'package:shoping_app/screens/ordrer_screen.dart';
@@ -30,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => Orders(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthProvider(),
         )
       ],
       child: MaterialApp(
@@ -40,7 +45,7 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.lime,
           textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme),
         ),
-        home: MyHomePage(),
+        home: AuthScreen(),
         routes: {
           ProductDetails.routeName: (context) => ProductDetails(),
           CartScreen.routeName: (context) => CartScreen(),
