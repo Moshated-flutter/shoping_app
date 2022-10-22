@@ -10,7 +10,7 @@ class CartItem {
   final String id;
   final String title;
   final double price;
-  final int amount;
+  final double amount;
   CartItem({
     required this.id,
     required this.title,
@@ -153,7 +153,7 @@ class Cart with ChangeNotifier {
     if (response == null) {
       return;
     }
-    print(json.decode(response.body));
+
     if (json.decode(response.body) == null) {
       return;
     }

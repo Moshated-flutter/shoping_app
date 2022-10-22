@@ -1,11 +1,10 @@
-// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: use_key_in_widget_constructors, avoid_returning_null_for_void
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product.dart';
 import 'package:shoping_app/providers/product_providers.dart';
 import 'package:shoping_app/screens/user_product.dart';
-import 'package:shoping_app/widgets/product_list_user.dart';
 
 class AddProduct extends StatefulWidget {
   static const routename = '/addproduct';

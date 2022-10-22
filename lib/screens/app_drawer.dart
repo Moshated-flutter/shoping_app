@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoping_app/screens/ordrer_screen.dart';
 import 'package:shoping_app/screens/user_product.dart';
-import 'package:shoping_app/widgets/product_list_user.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -31,7 +30,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(OrderScreen.routename);
             },
           ),
-          Divider(),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.add_shopping_cart),
             title: const Text('Manage Your Products'),

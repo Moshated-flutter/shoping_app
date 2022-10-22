@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, unnecessary_null_comparison
 
 import 'dart:convert';
 
@@ -40,14 +40,14 @@ class Orders with ChangeNotifier {
     final datetime = DateTime.now();
     final response = await http.post(Uri.parse(url),
         body: json.encode({
-          'totalamount': total,
+          'totalamount': total.toDouble(),
           'datetime': datetime.toIso8601String(),
           'cartProdut': cartproduct
               .map((e) => {
                     'cartid': e.id,
                     'carttitle': e.title,
-                    'cartprice': e.price,
-                    'cartamount': e.amount,
+                    'cartprice': e.price.toDouble(),
+                    'cartamount': e.amount.toDouble(),
                   })
               .toList(),
         }));
@@ -67,6 +67,32 @@ class Orders with ChangeNotifier {
     const url =
         'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json';
     final response = await http.get(Uri.parse(url));
-    print(json.decode(response.body));
+
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    if (extractedData == null) {
+      return;
+    }
+    final List<OrderItems> loadedOrder = [];
+    extractedData.forEach((key, value) {
+      loadedOrder.add(
+        OrderItems(
+          id: key,
+          amount: value['totalamount'],
+          dateTime: DateTime.parse(value['datetime']),
+          products: (value['cartProdut'] as List<dynamic>)
+              .map(
+                (e) => CartItem(
+                  id: e['cartid'],
+                  title: e['carttitle'],
+                  amount: e['cartamount'],
+                  price: e['cartamount'],
+                ),
+              )
+              .toList(),
+        ),
+      );
+      _orders = loadedOrder;
+      notifyListeners();
+    });
   }
 }

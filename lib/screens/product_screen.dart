@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: sort_child_properties_last, use_key_in_widget_constructors, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/cart.dart';
@@ -6,7 +6,7 @@ import 'package:shoping_app/providers/product_providers.dart';
 
 import 'package:shoping_app/screens/app_drawer.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
-import 'package:shoping_app/widgets/203%20badge.dart';
+import 'package:shoping_app/widgets/badge.dart';
 import 'package:shoping_app/widgets/product_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -69,7 +69,6 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
         Consumer<Cart>(
           builder: (context, cartData, child) => Badge(
-            // ignore: sort_child_properties_last
             child: IconButton(
               icon: const Icon(Icons.shopping_basket),
               onPressed: () {

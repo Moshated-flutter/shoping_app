@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, sized_box_for_whitespace
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product_providers.dart';
@@ -26,16 +28,16 @@ class ProductDetails extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Card(
               child: Text(
                 '\$${chosenProduc.price}',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
+                style: const TextStyle(fontSize: 20, color: Colors.grey),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Card(

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/cart.dart';
@@ -7,8 +9,9 @@ class CartWidget extends StatelessWidget {
   final String productid;
   final String title;
   final double price;
-  final int amount;
-  CartWidget(this.id, this.productid, this.title, this.price, this.amount);
+  final double amount;
+  const CartWidget(this.id, this.productid, this.title, this.price, this.amount,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +26,15 @@ class CartWidget extends StatelessWidget {
           context: context,
           builder: (cont) {
             return AlertDialog(
-              title: Text('Do you want to remove the item ?'),
+              title: const Text('Do you want to remove the item ?'),
               actions: [
                 ElevatedButton(
                   onPressed: () => Navigator.of(cont).pop(true),
-                  child: Text('Yes'),
+                  child: const Text('Yes'),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'),
+                  child: const Text('No'),
                 ),
               ],
             );
@@ -40,15 +43,15 @@ class CartWidget extends StatelessWidget {
       },
       key: ValueKey(id),
       background: Container(
-        child: Icon(Icons.delete),
         alignment: Alignment.centerRight,
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         color: Colors.red,
+        child: const Icon(Icons.delete),
       ),
       child: Card(
-        margin: EdgeInsets.all(15),
+        margin: const EdgeInsets.all(15),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 4,
             vertical: 15,
           ),
@@ -56,14 +59,14 @@ class CartWidget extends StatelessWidget {
             leading: CircleAvatar(
               child: FittedBox(
                 child: Text(
-                  '\$${price}',
+                  '\$$price',
                   softWrap: true,
                 ),
               ),
             ),
             title: Text(title),
             subtitle: Text('\$${amount * price}'),
-            trailing: Text('x${amount}'),
+            trailing: Text('x$amount'),
           ),
         ),
       ),

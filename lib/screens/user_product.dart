@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/product_providers.dart';
@@ -17,24 +19,24 @@ class UserProductScreen extends StatelessWidget {
     final productData = Provider.of<Products_provider>(context);
 
     return Scaffold(
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       appBar: AppBar(
         actions: [
           IconButton(
             onPressed: () {
               Navigator.of(context).pushNamed(AddProduct.routename);
             },
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
           ),
         ],
-        title: Text('Your products'),
+        title: const Text('Your products'),
       ),
       body: RefreshIndicator(
         onRefresh: () {
           return _refresh(context);
         },
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: ListView.builder(
             itemBuilder: (context, index) => UserProductList(
               productData.items[index].id,
