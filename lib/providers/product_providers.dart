@@ -42,6 +42,11 @@ class Products_provider with ChangeNotifier {
     // ),
   ];
   var favoritesFiltter = false;
+
+  final String tokenid;
+  final String userid;
+
+  Products_provider(this.tokenid, this._items, this.userid);
   List<Product_models> get favItems {
     return items.where((element) => element.isFavorite).toList();
   }
@@ -51,8 +56,8 @@ class Products_provider with ChangeNotifier {
   }
 
   Future<void> addproduct(Product_models product) async {
-    const url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json';
+    final url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json?auth=$tokenid';
     try {
       final response = await http.post(Uri.parse(url),
           body: json.encode({
@@ -115,10 +120,18 @@ class Products_provider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetproduct() async {
-    const url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json';
+    var url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json?auth=$tokenid';
 
     final response = await http.get(Uri.parse(url));
+    if (json.decode(response.body) == null) {
+      return;
+    }
+    url =
+        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/userfavorites/$userid.json?auth=$tokenid';
+    final favoriteResponseId = await http.get(Uri.parse(url));
+    final favoritedata = json.decode(favoriteResponseId.body);
+
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<Product_models> loadedProduct = [];
     extractedData.forEach((key, value) {
@@ -129,7 +142,7 @@ class Products_provider with ChangeNotifier {
           description: value['description'],
           price: value['price'],
           imageUrl: value['imageUrl'],
-          isFavorite: value['isfav'],
+          isFavorite: favoritedata == null ? false : favoritedata[key] ?? false,
         ),
       );
     });

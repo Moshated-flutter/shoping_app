@@ -1,3 +1,6 @@
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
+
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -5,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shoping_app/providers/auth_provider.dart';
 
+// ignore: constant_identifier_names
 enum AuthMode { Signup, Login }
 
 class AuthScreen extends StatelessWidget {
@@ -23,12 +27,12 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 191, 71, 238).withOpacity(0.5),
-                  Color.fromARGB(255, 35, 149, 52).withOpacity(0.9),
+                  const Color.fromARGB(255, 191, 71, 238).withOpacity(0.5),
+                  const Color.fromARGB(255, 35, 149, 52).withOpacity(0.9),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                stops: [0, 1],
+                stops: const [0, 1],
               ),
             ),
           ),
@@ -50,7 +54,7 @@ class AuthScreen extends StatelessWidget {
                       // ..translate(-10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 102, 2, 107),
+                        color: const Color.fromARGB(255, 102, 2, 107),
                         // ignore: prefer_const_literals_to_create_immutables
                         boxShadow: [
                           const BoxShadow(
@@ -97,6 +101,23 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  void showMessageDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('An error Occurred!'),
+        content: Text(message),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Okay'),
+          )
+        ],
+      ),
+    );
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
@@ -107,14 +128,35 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-    } else {
-      Provider.of<AuthProvider>(context, listen: false).signin(
-        _authData['email']!,
-        _authData['password']!,
-      );
-      // Sign user up
+    try {
+      if (_authMode == AuthMode.Login) {
+        await Provider.of<AuthProvider>(context, listen: false).login(
+          _authData['email']!,
+          _authData['password']!,
+        ); // Log user in
+      } else {
+        await Provider.of<AuthProvider>(context, listen: false).signup(
+          _authData['email']!,
+          _authData['password']!,
+        );
+        // Sign user up
+      }
+    } on HttpException catch (error) {
+      var errormessage = 'Authintication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errormessage = 'this email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL') ||
+          error.toString().contains('INVALID_PASSWORD')) {
+        errormessage = 'this is not a valid email address OR password';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errormessage = 'this password is too week';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errormessage = 'could not find a user with that email.';
+      }
+      showMessageDialog(errormessage);
+    } catch (error) {
+      var errormessage = 'could not authinticate you.please try again later';
+      showMessageDialog(errormessage);
     }
     setState(() {
       _isLoading = false;
@@ -215,7 +257,8 @@ class _AuthCardState extends State<AuthCard> {
                   // ignore: sort_child_properties_last
                   child: Text(
                     '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD',
-                    style: TextStyle(color: Color.fromARGB(255, 189, 30, 233)),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 189, 30, 233)),
                   ),
                   onPressed: _switchAuthMode,
                 ),

@@ -25,6 +25,9 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
+  final String tokeid;
+  Orders(this.tokeid, this._orders);
+
   Future<void> addorder(List<CartItem> cartproduct, double total) async {
     // var dummycart = cartproduct
     //     .map((e) => {
@@ -35,8 +38,8 @@ class Orders with ChangeNotifier {
     //         })
     //     .toList();
     // print(dummycart);
-    const url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json';
+    final url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json?auth=$tokeid';
     final datetime = DateTime.now();
     final response = await http.post(Uri.parse(url),
         body: json.encode({
@@ -64,14 +67,15 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSettheOrders() async {
-    const url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json';
+    final url =
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json?auth=$tokeid';
     final response = await http.get(Uri.parse(url));
-
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    if (extractedData == null) {
+    if (json.decode(response.body) == null) {
       return;
     }
+
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
     final List<OrderItems> loadedOrder = [];
     extractedData.forEach((key, value) {
       loadedOrder.add(

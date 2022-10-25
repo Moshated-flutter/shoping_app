@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:shoping_app/providers/auth_provider.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/orders_providers.dart';
-
 import 'package:shoping_app/providers/product_providers.dart';
 import 'package:shoping_app/screens/add_product.dart';
 import 'package:shoping_app/screens/auth_screen.dart';
@@ -25,35 +24,52 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => Products_provider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Orders(),
-        ),
-        ChangeNotifierProvider(
           create: (context) => AuthProvider(),
-        )
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'MyShop',
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          accentColor: Colors.lime,
-          textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme),
         ),
-        home: AuthScreen(),
-        routes: {
-          ProductDetails.routeName: (context) => ProductDetails(),
-          CartScreen.routeName: (context) => CartScreen(),
-          OrderScreen.routename: (context) => OrderScreen(),
-          UserProductScreen.routename: (context) => UserProductScreen(),
-          AddProduct.routename: (context) => AddProduct(),
-          EditProductScreen.routeName: (context) => EditProductScreen(),
-        },
+        ChangeNotifierProxyProvider<AuthProvider, Cart>(
+          create: (context) => Cart(
+              Provider.of<AuthProvider>(context, listen: false).token!, {}),
+          update: (context, value, previous) =>
+              Cart(value.token!, previous!.items),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, Orders>(
+          create: (context) => Orders(
+              Provider.of<AuthProvider>(context, listen: false).token!, []),
+          update: (context, value, previous) =>
+              Orders(value.token!, previous!.orders),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, Products_provider>(
+          create: (context) => Products_provider(
+            Provider.of<AuthProvider>(context, listen: false).token!,
+            [],
+            Provider.of<AuthProvider>(context, listen: false).token!,
+          ),
+          update: (context, value, previous) => Products_provider(
+            value.token!,
+            previous!.items,
+            value.userid!,
+          ),
+        ),
+      ],
+      child: Consumer<AuthProvider>(
+        builder: (ctx, auth, child) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'MyShop',
+          theme: ThemeData(
+            primarySwatch: Colors.green,
+            accentColor: Colors.lime,
+            textTheme: GoogleFonts.latoTextTheme(Theme.of(ctx).textTheme),
+          ),
+          home: auth.isauth ? ProductScreen() : AuthScreen(),
+          routes: {
+            ProductDetails.routeName: (ctx) => ProductDetails(),
+            CartScreen.routeName: (ctx) => CartScreen(),
+            OrderScreen.routename: (ctx) => OrderScreen(),
+            UserProductScreen.routename: (ctx) => UserProductScreen(),
+            AddProduct.routename: (ctx) => AddProduct(),
+            EditProductScreen.routeName: (ctx) => EditProductScreen(),
+          },
+        ),
       ),
     );
   }
