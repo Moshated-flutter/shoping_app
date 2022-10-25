@@ -1,7 +1,6 @@
 // ignore_for_file: camel_case_types
 
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,16 +19,14 @@ class Product_models with ChangeNotifier {
     required this.imageUrl,
     this.isFavorite = false,
   });
-  Future<void> toggleFavorites() async {
+  Future<void> toggleFavorites(String userid, String token) async {
     final url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/$id.json';
+        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/userfavorites/$userid/$id.json?auth=$token';
     var dummyfav = isFavorite;
     isFavorite = !isFavorite;
-    final response = await http.patch(
+    final response = await http.put(
       Uri.parse(url),
-      body: json.encode({
-        'isfav': isFavorite,
-      }),
+      body: json.encode(isFavorite),
     );
     if (response.statusCode >= 400) {
       isFavorite = dummyfav;
