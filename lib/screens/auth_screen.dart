@@ -27,11 +27,11 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color.fromARGB(255, 191, 71, 238).withOpacity(0.5),
-                  const Color.fromARGB(255, 35, 149, 52).withOpacity(0.9),
+                  const Color.fromARGB(255, 129, 71, 238).withOpacity(0.5),
+                  const Color.fromARGB(255, 54, 149, 68).withOpacity(0.9),
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 stops: const [0, 1],
               ),
             ),
@@ -92,7 +92,8 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
   final Map<String, String> _authData = {
@@ -101,6 +102,35 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  AnimationController? _animationController;
+  Animation<Size>? _animationHeight;
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animationHeight = Tween<Size>(
+      begin: const Size(double.infinity, 260),
+      end: const Size(double.infinity, 320),
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController as Animation<double>,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+    _animationHeight!.addListener(() {
+      return setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController!.dispose();
+  }
+
   void showMessageDialog(String message) {
     showDialog(
       context: context,
@@ -170,10 +200,12 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.Signup;
       });
+      _animationController!.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
+      _animationController!.reverse();
     }
   }
 
@@ -186,7 +218,20 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Signup ? 320 : 260,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 173, 236, 233).withOpacity(0.4),
+              const Color.fromARGB(255, 102, 49, 200).withOpacity(0.2),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0, 1],
+          ),
+        ),
+        // height: _authMode == AuthMode.Signup ? 320 : 260,
+        height: _animationHeight!.value.height,
         constraints:
             BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
