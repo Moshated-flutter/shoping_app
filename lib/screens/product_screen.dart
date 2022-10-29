@@ -27,14 +27,14 @@ class _ProductScreenState extends State<ProductScreen> {
         _isloading = true;
       });
       Provider.of<Cart>(context).fetchAndSetCart();
-      Provider.of<Cart>(context).printitems();
-      Provider.of<Products_provider>(context)
+      Provider.of<Products_provider>(context, listen: false)
           .fetchAndSetproduct()
           .then((value) {
         setState(() {
           _isloading = false;
         });
       });
+      Provider.of<Cart>(context, listen: false).printitems();
     }
     _init = false;
 

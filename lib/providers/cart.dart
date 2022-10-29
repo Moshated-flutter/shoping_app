@@ -91,7 +91,7 @@ class Cart with ChangeNotifier {
   }
 
   void printitems() {
-    print(_items);
+    print(_items.values.map((e) => {'id': e.id}).toList());
   }
 
   void removeitem(String productid) async {
