@@ -9,6 +9,7 @@ import 'package:shoping_app/screens/add_product.dart';
 import 'package:shoping_app/screens/auth_screen.dart';
 import 'package:shoping_app/screens/cart_screen.dart';
 import 'package:shoping_app/screens/edit_screen.dart';
+import 'package:shoping_app/screens/loading_screen.dart';
 import 'package:shoping_app/screens/ordrer_screen.dart';
 import 'package:shoping_app/screens/product_details_screen.dart';
 import 'package:shoping_app/screens/product_screen.dart';
@@ -28,26 +29,30 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<AuthProvider, Cart>(
           create: (context) => Cart(
-              Provider.of<AuthProvider>(context, listen: false).token!, {}),
+              Provider.of<AuthProvider>(context, listen: false).token,
+              {},
+              Provider.of<AuthProvider>(context, listen: false).userid),
           update: (context, value, previous) =>
-              Cart(value.token!, previous!.items),
+              Cart(value.token, previous!.items, value.userid),
         ),
         ChangeNotifierProxyProvider<AuthProvider, Orders>(
           create: (context) => Orders(
-              Provider.of<AuthProvider>(context, listen: false).token!, []),
+              Provider.of<AuthProvider>(context, listen: false).token,
+              [],
+              Provider.of<AuthProvider>(context, listen: false).userid),
           update: (context, value, previous) =>
-              Orders(value.token!, previous!.orders),
+              Orders(value.token, previous!.orders, value.userid),
         ),
         ChangeNotifierProxyProvider<AuthProvider, Products_provider>(
           create: (context) => Products_provider(
-            Provider.of<AuthProvider>(context, listen: false).token!,
+            Provider.of<AuthProvider>(context, listen: false).token,
             [],
-            Provider.of<AuthProvider>(context, listen: false).token!,
+            Provider.of<AuthProvider>(context, listen: false).token,
           ),
           update: (context, value, previous) => Products_provider(
-            value.token!,
+            value.token,
             previous!.items,
-            value.userid!,
+            value.userid,
           ),
         ),
       ],
@@ -60,7 +65,15 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.lime,
             textTheme: GoogleFonts.latoTextTheme(Theme.of(ctx).textTheme),
           ),
-          home: auth.isauth ? ProductScreen() : AuthScreen(),
+          home: auth.isauth
+              ? ProductScreen()
+              : FutureBuilder(
+                  future: auth.tryautologin(),
+                  builder: (context, snapshot) =>
+                      snapshot.connectionState == ConnectionState.waiting
+                          ? LoadingScreen()
+                          : AuthScreen(),
+                ),
           routes: {
             ProductDetails.routeName: (ctx) => ProductDetails(),
             CartScreen.routeName: (ctx) => CartScreen(),

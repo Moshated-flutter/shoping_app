@@ -25,21 +25,13 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  final String tokeid;
-  Orders(this.tokeid, this._orders);
+  final String? tokeid;
+  final String? userid;
+  Orders(this.tokeid, this._orders, this.userid);
 
   Future<void> addorder(List<CartItem> cartproduct, double total) async {
-    // var dummycart = cartproduct
-    //     .map((e) => {
-    //           'cartid': e.id,
-    //           'carttitle': e.title,
-    //           'cartprice': e.price,
-    //           'cartamount': e.amount,
-    //         })
-    //     .toList();
-    // print(dummycart);
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json?auth=$tokeid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order/$userid.json?auth=$tokeid';
     final datetime = DateTime.now();
     final response = await http.post(Uri.parse(url),
         body: json.encode({
@@ -68,9 +60,9 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSettheOrders() async {
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order.json?auth=$tokeid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/order/$userid.json?auth=$tokeid';
     final response = await http.get(Uri.parse(url));
-    if (json.decode(response.body) == null) {
+    if (json.decode(response.body) == null || response.statusCode >= 400) {
       return;
     }
 
@@ -95,7 +87,7 @@ class Orders with ChangeNotifier {
               .toList(),
         ),
       );
-      _orders = loadedOrder;
+      _orders = loadedOrder.reversed.toList();
       notifyListeners();
     });
   }

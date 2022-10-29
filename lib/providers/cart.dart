@@ -21,8 +21,9 @@ class CartItem {
 
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items = {};
-  final String tokenid;
-  Cart(this.tokenid, this._items);
+  final String? tokenid;
+  final String? userid;
+  Cart(this.tokenid, this._items, this.userid);
   Map<String, CartItem> get items {
     return {..._items};
   }
@@ -41,11 +42,11 @@ class Cart with ChangeNotifier {
 
   void addCart(String productId, double price, String title) async {
     final urlnew =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$userid.json?auth=$tokenid';
     if (_items.containsKey(productId)) {
       var findedaddress = _items[productId]!.id;
       final urlUpdate =
-          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$findedaddress.json?auth=$tokenid';
+          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$userid/$findedaddress.json?auth=$tokenid';
       _items.update(
         productId,
         (value) {
@@ -89,9 +90,13 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void printitems() {
+    print(_items);
+  }
+
   void removeitem(String productid) async {
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$productid.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$userid/$productid.json?auth=$tokenid';
 
     CartItem? existingcart = _items[productid];
     _items.removeWhere((key, value) => key == productid);
@@ -116,7 +121,7 @@ class Cart with ChangeNotifier {
   void clearCart() async {
     Map<String, CartItem>? dummmyitem = _items;
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$userid.json?auth=$tokenid';
     _items = {};
     notifyListeners();
     final response = await http.delete(Uri.parse(url));
@@ -126,6 +131,11 @@ class Cart with ChangeNotifier {
       return;
     }
     dummmyitem = null;
+  }
+
+  void clearCartinternals() {
+    _items = {};
+    notifyListeners();
   }
 
   void removesingleItem(String singleItemid) async {
@@ -149,22 +159,24 @@ class Cart with ChangeNotifier {
 
   Future<void> fetchAndSetCart() async {
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/cart/$userid.json?auth=$tokenid';
 
     final response = await http.get(Uri.parse(url));
     if (response == null) {
       return;
     }
 
-    if (json.decode(response.body) == null) {
+    if (json.decode(response.body) == null || response.statusCode >= 400) {
       return;
     }
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final Map<String, CartItem> loadedCart = {};
     extractedData.forEach((key, value) {
+      var amountvalue = value['amount'];
+      double amountchangetoint = amountvalue.toDouble();
       loadedCart.addAll({
         key: CartItem(
-          amount: value['amount'],
+          amount: amountchangetoint,
           price: value['price'],
           id: value['idProduct'],
           title: value['title'],

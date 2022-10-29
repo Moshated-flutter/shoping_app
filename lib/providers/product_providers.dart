@@ -43,8 +43,8 @@ class Products_provider with ChangeNotifier {
   ];
   var favoritesFiltter = false;
 
-  final String tokenid;
-  final String userid;
+  final String? tokenid;
+  final String? userid;
 
   Products_provider(this.tokenid, this._items, this.userid);
   List<Product_models> get favItems {
@@ -65,7 +65,8 @@ class Products_provider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isfav': product.isFavorite
+            'isfav': product.isFavorite,
+            'creatorId': userid,
           }));
 
       final newproduct = Product_models(
@@ -86,7 +87,7 @@ class Products_provider with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json';
+          'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json?auth=$tokenid';
       http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
@@ -105,7 +106,7 @@ class Products_provider with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product/$id.json?auth=$tokenid';
     var existingindex = _items.indexWhere((element) => element.id == id);
     Product_models? existingproduct = _items[existingindex];
     _items.removeAt(existingindex);
@@ -119,16 +120,18 @@ class Products_provider with ChangeNotifier {
     existingproduct = null;
   }
 
-  Future<void> fetchAndSetproduct() async {
+  Future<void> fetchAndSetproduct([bool filteruser = false]) async {
+    final filteruserpath =
+        filteruser ? 'orderBy="creatorId"&equalTo="$userid"' : '';
     var url =
-        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/product.json?auth=$tokenid&$filteruserpath';
 
     final response = await http.get(Uri.parse(url));
     if (json.decode(response.body) == null) {
       return;
     }
     url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/userfavorites/$userid.json?auth=$tokenid';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/userfavoritesProduct/$userid.json?auth=$tokenid';
     final favoriteResponseId = await http.get(Uri.parse(url));
     final favoritedata = json.decode(favoriteResponseId.body);
 

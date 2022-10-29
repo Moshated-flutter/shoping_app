@@ -21,7 +21,7 @@ class Product_models with ChangeNotifier {
   });
   Future<void> toggleFavorites(String userid, String token) async {
     final url =
-        'https://shopapp-a5aa1-default-rtdb.firebaseio.com/product/userfavorites/$userid/$id.json?auth=$token';
+        'https://shoping-4ff2a-default-rtdb.europe-west1.firebasedatabase.app/userfavoritesProduct/$userid/$id.json?auth=$token';
     var dummyfav = isFavorite;
     isFavorite = !isFavorite;
     final response = await http.put(

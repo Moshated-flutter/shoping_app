@@ -95,7 +95,7 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
-  Map<String, String> _authData = {
+  final Map<String, String> _authData = {
     'email': '',
     'password': '',
   };
@@ -130,11 +130,13 @@ class _AuthCardState extends State<AuthCard> {
     });
     try {
       if (_authMode == AuthMode.Login) {
+        FocusManager.instance.primaryFocus!.unfocus();
         await Provider.of<AuthProvider>(context, listen: false).login(
           _authData['email']!,
           _authData['password']!,
         ); // Log user in
       } else {
+        FocusManager.instance.primaryFocus!.unfocus();
         await Provider.of<AuthProvider>(context, listen: false).signup(
           _authData['email']!,
           _authData['password']!,
