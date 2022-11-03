@@ -14,37 +14,64 @@ class ProductDetails extends StatelessWidget {
         .firstWhere((element) => element.id == productid);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(chosenProduc.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(
-                chosenProduc.imageUrl,
-                fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            // title: Text(chosenProduc.title),
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Card(
+                color: Theme.of(context).primaryColor,
+                child: Container(
+                  width: 220,
+                  child: Text(
+                    chosenProduc.title,
+                  ),
+                ),
+              ),
+              background: Hero(
+                tag: chosenProduc.id,
+                child: Image.network(
+                  chosenProduc.imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            const SizedBox(
-              height: 10,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: Card(
+                    child: Text(
+                      '\$${chosenProduc.price}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: Card(
+                    child: Text(chosenProduc.description),
+                  ),
+                ),
+                const SizedBox(
+                  height: 800,
+                )
+              ],
             ),
-            Card(
-              child: Text(
-                '\$${chosenProduc.price}',
-                style: const TextStyle(fontSize: 20, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Card(
-              child: Text(chosenProduc.description),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

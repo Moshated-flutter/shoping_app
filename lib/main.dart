@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:shoping_app/helpers/cusom_route.dart';
 import 'package:shoping_app/providers/auth_provider.dart';
 import 'package:shoping_app/providers/cart.dart';
 import 'package:shoping_app/providers/orders_providers.dart';
@@ -64,6 +65,11 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.green,
             accentColor: Colors.lime,
             textTheme: GoogleFonts.latoTextTheme(Theme.of(ctx).textTheme),
+            // ignore: prefer_const_literals_to_create_immutables
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomPageTransitionBuilder(),
+              TargetPlatform.iOS: CustomPageTransitionBuilder(),
+            }),
           ),
           home: auth.isauth
               ? ProductScreen()

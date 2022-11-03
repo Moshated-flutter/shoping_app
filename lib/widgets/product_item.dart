@@ -18,17 +18,20 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
         // ignore: sort_child_properties_last
         child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushNamed(
-              ProductDetails.routeName,
-              arguments: chossenproducts.id,
-            );
-          },
-          child: Image.network(
-            chossenproducts.imageUrl,
-            fit: BoxFit.contain,
-          ),
-        ),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                ProductDetails.routeName,
+                arguments: chossenproducts.id,
+              );
+            },
+            child: Hero(
+              tag: chossenproducts.id,
+              child: FadeInImage(
+                placeholder: const AssetImage('assets/product-placeholder.png'),
+                image: NetworkImage(chossenproducts.imageUrl),
+                fit: BoxFit.contain,
+              ),
+            )),
         footer: GridTileBar(
           title: FittedBox(
             child: Text(
